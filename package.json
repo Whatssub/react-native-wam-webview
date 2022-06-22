@@ -6,7 +6,7 @@
   "typings": "index.d.ts",
   "author": "Choi Hyeongu <motivation.choi@whatssub.co>",
   "license": "MIT",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "homepage": "https://github.com/react-native-webview/react-native-webview#readme",
   "scripts": {
     "android": "react-native run-android",
@@ -80,7 +80,7 @@
     "lib",
     "index.js",
     "index.d.ts",
-    "react-native-webview.podspec",
+    "react-native-wam-webview.podspec",
     "react-native.config.js"
   ]
 }
