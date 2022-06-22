@@ -1245,13 +1245,90 @@ public class RNCWebViewManager extends SimpleViewManager<WebView> {
 
     @Override
     public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture, Message resultMsg) {
+      final ThemedReactContext context = (ThemedReactContext) view.getContext();
+      final WebView newWebView = new RNCWebView(context);
+      RNCWebChromeClient client = new RNCWebChromeClient(this.mReactContext, view);
+      client.setProgressChangedFilter(progressChangedFilter);
 
-      final WebView newWebView = new WebView(view.getContext());
+      setWebSettingCopy(view, newWebView);
+
+      newWebView.setLayoutParams(view.getLayoutParams());
+      newWebView.setWebViewClient(new RNCWebViewClient() {
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+          return false;
+        }
+      });
+
+      newWebView.setWebChromeClient(client);
+
+      getRootView().addView(newWebView);
+
       final WebView.WebViewTransport transport = (WebView.WebViewTransport) resultMsg.obj;
       transport.setWebView(newWebView);
       resultMsg.sendToTarget();
 
       return true;
+    }
+
+    void setWebSettingCopy(WebView view, WebView newWebView) {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+        newWebView.getSettings().setMediaPlaybackRequiresUserGesture( view.getSettings().getMediaPlaybackRequiresUserGesture() );
+      }
+
+      newWebView.getSettings().setBuiltInZoomControls(view.getSettings().getBuiltInZoomControls());
+      newWebView.getSettings().setDisplayZoomControls(view.getSettings().getDisplayZoomControls());
+      newWebView.getSettings().setAllowFileAccess(view.getSettings().getAllowFileAccess());
+      newWebView.getSettings().setAllowContentAccess(view.getSettings().getAllowContentAccess());
+      newWebView.getSettings().setLoadWithOverviewMode(view.getSettings().getLoadWithOverviewMode());
+//      newWebView.getSettings().setEnableSmoothTransition(view.getSettings().);
+      newWebView.getSettings().setSaveFormData(view.getSettings().getSaveFormData());
+      newWebView.getSettings().setSavePassword(view.getSettings().getSavePassword());
+      newWebView.getSettings().setTextZoom(view.getSettings().getTextZoom());
+
+      newWebView.getSettings().setUseWideViewPort(view.getSettings().getUseWideViewPort());
+      newWebView.getSettings().setSupportMultipleWindows(true);
+      newWebView.getSettings().setLayoutAlgorithm(view.getSettings().getLayoutAlgorithm());
+      newWebView.getSettings().setStandardFontFamily(view.getSettings().getStandardFontFamily());
+      newWebView.getSettings().setFixedFontFamily(view.getSettings().getFixedFontFamily());
+      newWebView.getSettings().setSansSerifFontFamily(view.getSettings().getSansSerifFontFamily());
+      newWebView.getSettings().setSerifFontFamily(view.getSettings().getSerifFontFamily());
+      newWebView.getSettings().setCursiveFontFamily(view.getSettings().getCursiveFontFamily());
+      newWebView.getSettings().setFantasyFontFamily(view.getSettings().getFantasyFontFamily());
+      newWebView.getSettings().setMinimumFontSize(view.getSettings().getMinimumFontSize());
+      newWebView.getSettings().setMinimumLogicalFontSize(view.getSettings().getMinimumLogicalFontSize());
+      newWebView.getSettings().setDefaultFontSize(view.getSettings().getDefaultFontSize());
+      newWebView.getSettings().setDefaultFixedFontSize(view.getSettings().getDefaultFixedFontSize());
+      newWebView.getSettings().setLoadsImagesAutomatically(view.getSettings().getLoadsImagesAutomatically());
+      newWebView.getSettings().setBlockNetworkImage(view.getSettings().getBlockNetworkImage());
+      newWebView.getSettings().setJavaScriptEnabled(view.getSettings().getJavaScriptEnabled());
+      newWebView.getSettings().setDatabaseEnabled(view.getSettings().getDatabaseEnabled());
+      newWebView.getSettings().setDomStorageEnabled(view.getSettings().getDomStorageEnabled());
+
+      newWebView.getSettings().setJavaScriptCanOpenWindowsAutomatically(view.getSettings().getJavaScriptCanOpenWindowsAutomatically());
+      newWebView.getSettings().setDefaultTextEncodingName(view.getSettings().getDefaultTextEncodingName());
+      newWebView.getSettings().setUserAgentString(view.getSettings().getUserAgentString());
+      newWebView.getSettings().setCacheMode(view.getSettings().getCacheMode());
+
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        newWebView.getSettings().setMixedContentMode(view.getSettings().getMixedContentMode());
+      }
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        newWebView.getSettings().setSafeBrowsingEnabled(view.getSettings().getSafeBrowsingEnabled());
+      }
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        newWebView.getSettings().setForceDark(view.getSettings().getForceDark());
+      }
+
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        newWebView.getSettings().setDisabledActionModeMenuItems(view.getSettings().getDisabledActionModeMenuItems());
+      }
+    }
+
+    @Override
+    public void onCloseWindow(WebView window) {
+      super.onCloseWindow(window);
+      getRootView().removeView(window);
     }
 
     @Override

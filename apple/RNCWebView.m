@@ -82,8 +82,10 @@ RCTAutoInsetsProtocol>
 @property (nonatomic, copy) RCTDirectEventBlock onContentProcessDidTerminate;
 #if !TARGET_OS_OSX
 @property (nonatomic, copy) WKWebView *webView;
+@property (nonatomic, copy) NSMutableArray *webViews;
 #else
 @property (nonatomic, copy) RNCWKWebView *webView;
+@property (nonatomic, copy) NSMutableArray *webViews;
 #endif // !TARGET_OS_OSX
 @property (nonatomic, strong) WKUserScript *postMessageScript;
 @property (nonatomic, strong) WKUserScript *atStartScript;
@@ -307,11 +309,15 @@ RCTAutoInsetsProtocol>
 /**
  * See https://stackoverflow.com/questions/25713069/why-is-wkwebview-not-opening-links-with-target-blank/25853806#25853806 for details.
  */
+//WAM
 - (WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
 {
-  if (!navigationAction.targetFrame.isMainFrame) {
-    [webView loadRequest:navigationAction.request];
+  WKWebView* lastWebview = _webViews.lastObject;
+  
+  if(lastWebview) {
+    return [self createWebView:lastWebview.frame :configuration];
   }
+  
   return nil;
 }
 
@@ -446,10 +452,12 @@ RCTAutoInsetsProtocol>
     }
 #endif
     
+    _webViews = [[NSMutableArray alloc] init];
     [self addSubview:_webView];
     [self setHideKeyboardAccessoryView: _savedHideKeyboardAccessoryView];
     [self setKeyboardDisplayRequiresUserAction: _savedKeyboardDisplayRequiresUserAction];
     [self visitSource];
+    [_webViews addObject:_webView];
   }
 #if !TARGET_OS_OSX
   // Allow this object to recognize gestures
@@ -1639,6 +1647,37 @@ didFinishNavigation:(WKNavigation *)navigation
     }
   }
   return request;
+}
+
+// WAM 팝업 열기
+- (WKWebView *) createWebView: (CGRect)frame:(WKWebViewConfiguration*)configuration {
+  WKWebView *webView =  [[WKWebView alloc] initWithFrame:frame configuration:configuration];
+  webView.UIDelegate = self;
+  webView.navigationDelegate = self;
+  [self addSubview:webView];
+  [_webViews addObject:webView];
+  
+  return webView;
+}
+
+/// ---------- 팝업 닫기 ----------
+/// - window.close()가 호출되면 앞에서 생성한 팝업 webview를 닫아야 합니다.
+///
+-(void)webViewDidClose:(WKWebView *)webView {
+  // 팝업 닫히는 경우 호출됨
+  WKWebView* lastWebview = _webViews.lastObject;
+  
+  if(lastWebview) {
+    [lastWebview removeFromSuperview];
+    [self destroyCurrentWebView];
+  }
+  
+}
+
+// 웹뷰 삭제 메소드 예제
+-(void)destroyCurrentWebView {
+  // 웹뷰 목록과 화면에서 제거하기
+  [_webViews removeLastObject];
 }
 
 @end
