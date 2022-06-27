@@ -6,7 +6,7 @@
   "typings": "index.d.ts",
   "author": "Choi Hyeongu <motivation.choi@whatssub.co>",
   "license": "MIT",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "homepage": "https://github.com/react-native-webview/react-native-webview#readme",
   "scripts": {
     "android": "react-native run-android",
@@ -23,7 +23,7 @@
     "test:windows": "yarn jest --setupFiles=./jest-setups/jest.setup.js"
   },
   "rn-docs": {
-    "title": "Webview",
+    "title": "WAMWebView",
     "type": "Component"
   },
   "peerDependencies": {
