@@ -5,10 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#import "RNCWebView.h"
+#import "WAMWebView.h"
 #import <React/RCTConvert.h>
 #import <React/RCTAutoInsetsProtocol.h>
-#import "RNCWKProcessPoolManager.h"
+#import "WAMWKProcessPoolManager.h"
 #if !TARGET_OS_OSX
 #import <UIKit/UIKit.h>
 #else
@@ -23,15 +23,15 @@ static NSString *const MessageHandlerName = @"ReactNativeWebView";
 static NSURLCredential* clientAuthenticationCredential;
 static NSDictionary* customCertificatesForHost;
 
-NSString *const CUSTOM_SELECTOR = @"_CUSTOM_SELECTOR_";
+NSString *const WAM_CUSTOM_SELECTOR = @"WAM_CUSTOM_SELECTOR_";
 
 #if !TARGET_OS_OSX
 // runtime trick to remove WKWebView keyboard default toolbar
 // see: http://stackoverflow.com/questions/19033292/ios-7-uiwebview-keyboard-issue/19042279#19042279
-@interface _SwizzleHelperWK : UIView
+@interface WAM_SwizzleHelperWK : UIView
 @property (nonatomic, copy) WKWebView *webView;
 @end
-@implementation _SwizzleHelperWK
+@implementation WAM_SwizzleHelperWK
 -(id)inputAccessoryView
 {
   if (_webView == nil) {
@@ -49,12 +49,12 @@ NSString *const CUSTOM_SELECTOR = @"_CUSTOM_SELECTOR_";
 #endif // !TARGET_OS_OSX
 
 #if TARGET_OS_OSX
-@interface RNCWKWebView : WKWebView
+@interface WAMWKWebView : WKWebView
 @end
-@implementation RNCWKWebView
+@implementation WAMWKWebView
 - (void)scrollWheel:(NSEvent *)theEvent {
-  RNCWebView *rncWebView = (RNCWebView *)[self superview];
-  RCTAssert([rncWebView isKindOfClass:[rncWebView class]], @"superview must be an RNCWebView");
+  WAMWebView *rncWebView = (WAMWebView *)[self superview];
+  RCTAssert([rncWebView isKindOfClass:[rncWebView class]], @"superview must be an WAMWebView");
   if (![rncWebView scrollEnabled]) {
     [[self nextResponder] scrollWheel:theEvent];
     return;
@@ -64,7 +64,7 @@ NSString *const CUSTOM_SELECTOR = @"_CUSTOM_SELECTOR_";
 @end
 #endif // TARGET_OS_OSX
 
-@interface RNCWebView () <WKUIDelegate, WKNavigationDelegate, WKScriptMessageHandler,
+@interface WAMWebView () <WKUIDelegate, WKNavigationDelegate, WKScriptMessageHandler,
 #if !TARGET_OS_OSX
 UIScrollViewDelegate,
 #endif // !TARGET_OS_OSX
@@ -84,7 +84,7 @@ RCTAutoInsetsProtocol>
 @property (nonatomic, copy) WKWebView *webView;
 @property (nonatomic, copy) NSMutableArray *webViews;
 #else
-@property (nonatomic, copy) RNCWKWebView *webView;
+@property (nonatomic, copy) WAMWKWebView *webView;
 @property (nonatomic, copy) NSMutableArray *webViews;
 #endif // !TARGET_OS_OSX
 @property (nonatomic, strong) WKUserScript *postMessageScript;
@@ -92,7 +92,7 @@ RCTAutoInsetsProtocol>
 @property (nonatomic, strong) WKUserScript *atEndScript;
 @end
 
-@implementation RNCWebView
+@implementation WAMWebView
 {
 #if !TARGET_OS_OSX
   UIColor * _savedBackgroundColor;
@@ -152,7 +152,7 @@ RCTAutoInsetsProtocol>
 #endif
     _enableApplePay = NO;
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 150000 /* iOS 15 */
-    _mediaCapturePermissionGrantType = RNCWebViewPermissionGrantType_Prompt;
+    _mediaCapturePermissionGrantType = WAMWebViewPermissionGrantType_Prompt;
 #endif
   }
   
@@ -219,7 +219,7 @@ RCTAutoInsetsProtocol>
     for(NSDictionary *menuItem in self.menuItems) {
       NSString *menuItemLabel = [RCTConvert NSString:menuItem[@"label"]];
       NSString *menuItemKey = [RCTConvert NSString:menuItem[@"key"]];
-      NSString *sel = [NSString stringWithFormat:@"%@%@", CUSTOM_SELECTOR, menuItemKey];
+      NSString *sel = [NSString stringWithFormat:@"%@%@", WAM_CUSTOM_SELECTOR, menuItemKey];
       UIMenuItem *item = [[UIMenuItem alloc] initWithTitle: menuItemLabel
                                                     action: NSSelectorFromString(sel)];
       
@@ -279,7 +279,7 @@ RCTAutoInsetsProtocol>
 - (void)forwardInvocation:(NSInvocation *)invocation
 {
   NSString *sel = NSStringFromSelector([invocation selector]);
-  NSRange match = [sel rangeOfString:CUSTOM_SELECTOR];
+  NSRange match = [sel rangeOfString:WAM_CUSTOM_SELECTOR];
   if (match.location == 0) {
     [self tappedMenuItem:[sel substringFromIndex:17]];
   } else {
@@ -298,7 +298,7 @@ RCTAutoInsetsProtocol>
 {
   NSString *sel = NSStringFromSelector(action);
   // Do any of them have our custom keys?
-  NSRange match = [sel rangeOfString:CUSTOM_SELECTOR];
+  NSRange match = [sel rangeOfString:WAM_CUSTOM_SELECTOR];
   
   if (match.location == 0) {
     return YES;
@@ -358,7 +358,7 @@ RCTAutoInsetsProtocol>
     wkWebViewConfig.websiteDataStore = [WKWebsiteDataStore defaultDataStore];
   }
   if(self.useSharedProcessPool) {
-    wkWebViewConfig.processPool = [[RNCWKProcessPoolManager sharedManager] sharedProcessPool];
+    wkWebViewConfig.processPool = [[WAMWKProcessPoolManager sharedManager] sharedProcessPool];
   }
   wkWebViewConfig.userContentController = [WKUserContentController new];
   
@@ -381,7 +381,7 @@ RCTAutoInsetsProtocol>
 #endif
   
   // Shim the HTML5 history API:
-  [wkWebViewConfig.userContentController addScriptMessageHandler:[[RNCWeakScriptMessageDelegate alloc] initWithDelegate:self]
+  [wkWebViewConfig.userContentController addScriptMessageHandler:[[WAMWeakScriptMessageDelegate alloc] initWithDelegate:self]
                                                             name:HistoryShimName];
   [self resetupScripts:wkWebViewConfig];
   
@@ -415,7 +415,7 @@ RCTAutoInsetsProtocol>
 #if !TARGET_OS_OSX
     _webView = [[WKWebView alloc] initWithFrame:self.bounds configuration: wkWebViewConfig];
 #else
-    _webView = [[RNCWKWebView alloc] initWithFrame:self.bounds configuration: wkWebViewConfig];
+    _webView = [[WAMWKWebView alloc] initWithFrame:self.bounds configuration: wkWebViewConfig];
 #endif // !TARGET_OS_OSX
     
     [self setBackgroundColor: _savedBackgroundColor];
@@ -819,7 +819,7 @@ RCTAutoInsetsProtocol>
   
   if(subview == nil) return;
   
-  NSString* name = [NSString stringWithFormat:@"%@_SwizzleHelperWK", subview.class.superclass];
+  NSString* name = [NSString stringWithFormat:@"%@WAM_SwizzleHelperWK", subview.class.superclass];
   Class newClass = NSClassFromString(name);
   
   if(newClass == nil)
@@ -827,7 +827,7 @@ RCTAutoInsetsProtocol>
     newClass = objc_allocateClassPair(subview.class, [name cStringUsingEncoding:NSASCIIStringEncoding], 0);
     if(!newClass) return;
     
-    Method method = class_getInstanceMethod([_SwizzleHelperWK class], @selector(inputAccessoryView));
+    Method method = class_getInstanceMethod([WAM_SwizzleHelperWK class], @selector(inputAccessoryView));
     class_addMethod(newClass, @selector(inputAccessoryView), method_getImplementation(method), method_getTypeEncoding(method));
     
     objc_registerClassPair(newClass);
@@ -924,7 +924,7 @@ RCTAutoInsetsProtocol>
 {
   [super layoutSubviews];
   
-  // Ensure webview takes the position and dimensions of RNCWebView
+  // Ensure webview takes the position and dimensions of WAMWebView
   _webView.frame = self.bounds;
 #if !TARGET_OS_OSX
   _webView.scrollView.contentInset = _contentInset;
@@ -1096,16 +1096,16 @@ RCTAutoInsetsProtocol>
                         initiatedByFrame:(WKFrameInfo *)frame
                                     type:(WKMediaCaptureType)type
                          decisionHandler:(void (^)(WKPermissionDecision decision))decisionHandler {
-  if (_mediaCapturePermissionGrantType == RNCWebViewPermissionGrantType_GrantIfSameHost_ElsePrompt || _mediaCapturePermissionGrantType == RNCWebViewPermissionGrantType_GrantIfSameHost_ElseDeny) {
+  if (_mediaCapturePermissionGrantType == WAMWebViewPermissionGrantType_GrantIfSameHost_ElsePrompt || _mediaCapturePermissionGrantType == WAMWebViewPermissionGrantType_GrantIfSameHost_ElseDeny) {
     if ([origin.host isEqualToString:webView.URL.host]) {
       decisionHandler(WKPermissionDecisionGrant);
     } else {
-      WKPermissionDecision decision = _mediaCapturePermissionGrantType == RNCWebViewPermissionGrantType_GrantIfSameHost_ElsePrompt ? WKPermissionDecisionPrompt : WKPermissionDecisionDeny;
+      WKPermissionDecision decision = _mediaCapturePermissionGrantType == WAMWebViewPermissionGrantType_GrantIfSameHost_ElsePrompt ? WKPermissionDecisionPrompt : WKPermissionDecisionDeny;
       decisionHandler(decision);
     }
-  } else if (_mediaCapturePermissionGrantType == RNCWebViewPermissionGrantType_Deny) {
+  } else if (_mediaCapturePermissionGrantType == WAMWebViewPermissionGrantType_Deny) {
     decisionHandler(WKPermissionDecisionDeny);
-  } else if (_mediaCapturePermissionGrantType == RNCWebViewPermissionGrantType_Grant) {
+  } else if (_mediaCapturePermissionGrantType == WAMWebViewPermissionGrantType_Grant) {
     decisionHandler(WKPermissionDecisionGrant);
   } else {
     decisionHandler(WKPermissionDecisionPrompt);
@@ -1524,7 +1524,7 @@ didFinishNavigation:(WKNavigation *)navigation
   [wkWebViewConfig.userContentController removeScriptMessageHandlerForName:MessageHandlerName];
   if(self.enableApplePay){
     if (self.postMessageScript){
-      [wkWebViewConfig.userContentController addScriptMessageHandler:[[RNCWeakScriptMessageDelegate alloc] initWithDelegate:self]
+      [wkWebViewConfig.userContentController addScriptMessageHandler:[[WAMWeakScriptMessageDelegate alloc] initWithDelegate:self]
                                                                 name:MessageHandlerName];
     }
     return;
@@ -1615,7 +1615,7 @@ didFinishNavigation:(WKNavigation *)navigation
   
   if(_messagingEnabled){
     if (self.postMessageScript){
-      [wkWebViewConfig.userContentController addScriptMessageHandler:[[RNCWeakScriptMessageDelegate alloc] initWithDelegate:self]
+      [wkWebViewConfig.userContentController addScriptMessageHandler:[[WAMWeakScriptMessageDelegate alloc] initWithDelegate:self]
                                                                 name:MessageHandlerName];
       [wkWebViewConfig.userContentController addUserScript:self.postMessageScript];
     }
@@ -1682,7 +1682,7 @@ didFinishNavigation:(WKNavigation *)navigation
 
 @end
 
-@implementation RNCWeakScriptMessageDelegate
+@implementation WAMWeakScriptMessageDelegate
 
 - (instancetype)initWithDelegate:(id<WKScriptMessageHandler>)scriptDelegate {
   self = [super init];

@@ -9,25 +9,25 @@
 #import <React/RCTDefines.h>
 #import <WebKit/WebKit.h>
 
-typedef enum RNCWebViewPermissionGrantType : NSUInteger {
-  RNCWebViewPermissionGrantType_GrantIfSameHost_ElsePrompt,
-  RNCWebViewPermissionGrantType_GrantIfSameHost_ElseDeny,
-  RNCWebViewPermissionGrantType_Deny,
-  RNCWebViewPermissionGrantType_Grant,
-  RNCWebViewPermissionGrantType_Prompt
-} RNCWebViewPermissionGrantType;
+typedef enum WAMWebViewPermissionGrantType : NSUInteger {
+  WAMWebViewPermissionGrantType_GrantIfSameHost_ElsePrompt,
+  WAMWebViewPermissionGrantType_GrantIfSameHost_ElseDeny,
+  WAMWebViewPermissionGrantType_Deny,
+  WAMWebViewPermissionGrantType_Grant,
+  WAMWebViewPermissionGrantType_Prompt
+} WAMWebViewPermissionGrantType;
 
-@class RNCWebView;
+@class WAMWebView;
 
-@protocol RNCWebViewDelegate <NSObject>
+@protocol WAMWebViewDelegate <NSObject>
 
-- (BOOL)webView:(RNCWebView *_Nonnull)webView
+- (BOOL)webView:(WAMWebView *_Nonnull)webView
 shouldStartLoadForRequest:(NSMutableDictionary<NSString *, id> *_Nonnull)request
    withCallback:(RCTDirectEventBlock _Nonnull)callback;
 
 @end
 
-@interface RNCWeakScriptMessageDelegate : NSObject<WKScriptMessageHandler>
+@interface WAMWeakScriptMessageDelegate : NSObject<WKScriptMessageHandler>
 
 @property (nonatomic, weak, nullable) id<WKScriptMessageHandler> scriptDelegate;
 
@@ -35,9 +35,9 @@ shouldStartLoadForRequest:(NSMutableDictionary<NSString *, id> *_Nonnull)request
 
 @end
 
-@interface RNCWebView : RCTView
+@interface WAMWebView : RCTView
 
-@property (nonatomic, weak) id<RNCWebViewDelegate> _Nullable delegate;
+@property (nonatomic, weak) id<WAMWebViewDelegate> _Nullable delegate;
 @property (nonatomic, copy) NSDictionary * _Nullable source;
 @property (nonatomic, assign) BOOL messagingEnabled;
 @property (nonatomic, copy) NSString * _Nullable injectedJavaScript;
@@ -98,7 +98,7 @@ shouldStartLoadForRequest:(NSMutableDictionary<NSString *, id> *_Nonnull)request
 #endif
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 150000 /* iOS 15 */
-@property (nonatomic, assign) RNCWebViewPermissionGrantType mediaCapturePermissionGrantType;
+@property (nonatomic, assign) WAMWebViewPermissionGrantType mediaCapturePermissionGrantType;
 #endif
 
 + (void)setClientAuthenticationCredential:(nullable NSURLCredential*)credential;

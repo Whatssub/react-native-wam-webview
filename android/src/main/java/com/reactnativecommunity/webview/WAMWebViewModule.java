@@ -42,9 +42,9 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static android.app.Activity.RESULT_OK;
 
-@ReactModule(name = RNCWebViewModule.MODULE_NAME)
-public class RNCWebViewModule extends ReactContextBaseJavaModule implements ActivityEventListener {
-  public static final String MODULE_NAME = "RNCWebView";
+@ReactModule(name = WAMWebViewModule.MODULE_NAME)
+public class WAMWebViewModule extends ReactContextBaseJavaModule implements ActivityEventListener {
+  public static final String MODULE_NAME = "WAMWebView";
   private static final int PICKER = 1;
   private static final int PICKER_LEGACY = 3;
   private static final int FILE_DOWNLOAD_PERMISSION_REQUEST = 1;
@@ -117,7 +117,7 @@ public class RNCWebViewModule extends ReactContextBaseJavaModule implements Acti
     };
   }
 
-  public RNCWebViewModule(ReactApplicationContext reactContext) {
+  public WAMWebViewModule(ReactApplicationContext reactContext) {
     super(reactContext);
     reactContext.addActivityEventListener(this);
   }
@@ -265,7 +265,7 @@ public class RNCWebViewModule extends ReactContextBaseJavaModule implements Acti
     if (chooserIntent.resolveActivity(getCurrentActivity().getPackageManager()) != null) {
       getCurrentActivity().startActivityForResult(chooserIntent, PICKER_LEGACY);
     } else {
-      Log.w("RNCWebViewModule", "there is no Activity to handle this Intent");
+      Log.w("WAMWebViewModule", "there is no Activity to handle this Intent");
     }
   }
 
@@ -298,7 +298,7 @@ public class RNCWebViewModule extends ReactContextBaseJavaModule implements Acti
     if (chooserIntent.resolveActivity(getCurrentActivity().getPackageManager()) != null) {
       getCurrentActivity().startActivityForResult(chooserIntent, PICKER);
     } else {
-      Log.w("RNCWebViewModule", "there is no Activity to handle this Intent");
+      Log.w("WAMWebViewModule", "there is no Activity to handle this Intent");
     }
 
     return true;
@@ -314,7 +314,7 @@ public class RNCWebViewModule extends ReactContextBaseJavaModule implements Acti
     try {
       dm.enqueue(this.downloadRequest);
     } catch (IllegalArgumentException e) {
-      Log.w("RNCWebViewModule", "Unsupported URI, aborting download", e);
+      Log.w("WAMWebViewModule", "Unsupported URI, aborting download", e);
       return;
     }
 

@@ -1,4 +1,4 @@
-import WebView from './WebView';
+import WAMWebView from './WAMWebView';
 
-export { WebView };
-export default WebView;
+export { WAMWebView };
+export default WAMWebView;
