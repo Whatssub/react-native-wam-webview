@@ -1,4 +1,4 @@
-package com.reactnativecommunity.webview;
+package co.whatssub.wam.webview;
 
 import androidx.core.content.FileProvider;
 

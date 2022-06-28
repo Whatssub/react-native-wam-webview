@@ -1,4 +1,4 @@
-package com.reactnativecommunity.webview
+package co.whatssub.wam.webview
 
 import com.facebook.react.ReactPackage
 import com.facebook.react.bridge.ReactApplicationContext

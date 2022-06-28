@@ -1,4 +1,4 @@
-package com.reactnativecommunity.webview;
+package co.whatssub.wam.webview;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -77,15 +77,15 @@ import com.facebook.react.uimanager.annotations.ReactProp;
 import com.facebook.react.uimanager.events.ContentSizeChangeEvent;
 import com.facebook.react.uimanager.events.Event;
 import com.facebook.react.uimanager.events.EventDispatcher;
-import com.reactnativecommunity.webview.WAMWebViewModule.ShouldOverrideUrlLoadingLock.ShouldOverrideCallbackState;
-import com.reactnativecommunity.webview.events.TopLoadingErrorEvent;
-import com.reactnativecommunity.webview.events.TopHttpErrorEvent;
-import com.reactnativecommunity.webview.events.TopLoadingFinishEvent;
-import com.reactnativecommunity.webview.events.TopLoadingProgressEvent;
-import com.reactnativecommunity.webview.events.TopLoadingStartEvent;
-import com.reactnativecommunity.webview.events.TopMessageEvent;
-import com.reactnativecommunity.webview.events.TopShouldStartLoadWithRequestEvent;
-import com.reactnativecommunity.webview.events.TopRenderProcessGoneEvent;
+import co.whatssub.wam.webview.WAMWebViewModule.ShouldOverrideUrlLoadingLock.ShouldOverrideCallbackState;
+import co.whatssub.wam.webview.events.TopLoadingErrorEvent;
+import co.whatssub.wam.webview.events.TopHttpErrorEvent;
+import co.whatssub.wam.webview.events.TopLoadingFinishEvent;
+import co.whatssub.wam.webview.events.TopLoadingProgressEvent;
+import co.whatssub.wam.webview.events.TopLoadingStartEvent;
+import co.whatssub.wam.webview.events.TopMessageEvent;
+import co.whatssub.wam.webview.events.TopShouldStartLoadWithRequestEvent;
+import co.whatssub.wam.webview.events.TopRenderProcessGoneEvent;
 
 import org.json.JSONException;
 import org.json.JSONObject;
